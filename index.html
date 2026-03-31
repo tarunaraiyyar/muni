@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MUNI+ — Design Thinking Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --crimson: #7a0c12;
+    --crimson-light: #9e1219;
+    --crimson-pale: #c9383f;
+    --cream: #f5f0e8;
+    --dark: #111110;
+    --dark-mid: #1c1b19;
+    --mid: #2e2c28;
+    --text-muted: #888680;
+    --gold: #c9a84c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 48px;
+    background: linear-gradient(to bottom, rgba(17,17,16,0.95), transparent);
+    backdrop-filter: blur(2px);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .nav-logo span {
+    color: var(--crimson-pale);
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+  }
+
+  nav ul a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  nav ul a:hover { color: var(--cream); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(122,12,18,0.25) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(122,12,18,0.1) 0%, transparent 60%);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(245,240,232,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,240,232,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Animated bus line */
+  .bus-line {
+    position: absolute;
+    top: 38%;
+    left: -100%;
+    width: 180px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--crimson-pale), transparent);
+    animation: busMove 8s linear infinite;
+  }
+
+  .bus-line:nth-child(2) { top: 55%; animation-delay: 3s; animation-duration: 11s; }
+  .bus-line:nth-child(3) { top: 70%; animation-delay: 6s; animation-duration: 9s; }
+
+  @keyframes busMove {
+    from { left: -200px; }
+    to { left: 110%; }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--crimson-pale);
+    border: 1px solid var(--crimson);
+    padding: 6px 16px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 14vw, 180px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: var(--cream);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-title .plus {
+    color: var(--crimson-pale);
+    display: inline-block;
+  }
+
+  .hero-subtitle {
+    margin-top: 32px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(16px, 2vw, 22px);
+    color: var(--text-muted);
+    max-width: 600px;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-meta {
+    margin-top: 48px;
+    display: flex;
+    gap: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+
+  .hero-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .hero-meta-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .hero-meta-value {
+    font-size: 15px;
+    color: var(--cream);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    right: 48px;
+    writing-mode: vertical-rl;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .scroll-hint::after {
+    content: '';
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--crimson-pale), transparent);
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION COMMON */
+  section {
+    padding: 120px 48px;
+    position: relative;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--crimson-pale);
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 7vw, 90px);
+    letter-spacing: 2px;
+    line-height: 1;
+    color: var(--cream);
+    margin-bottom: 48px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, var(--crimson), transparent);
+    margin: 0;
+  }
+
+  /* PROBLEM SECTION */
+  .problem {
+    background: var(--dark-mid);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .problem-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 3vw, 36px);
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--cream);
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .problem-quote::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 4px;
+    width: 3px;
+    height: calc(100% - 8px);
+    background: var(--crimson-pale);
+  }
+
+  .problem-quote cite {
+    display: block;
+    margin-top: 20px;
+    font-style: normal;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--crimson-pale);
+  }
+
+  .problem-hmw {
+    border: 1px solid var(--crimson);
+    padding: 48px;
+    position: relative;
+    background: rgba(122,12,18,0.08);
+  }
+
+  .problem-hmw::before {
+    content: 'HMW';
+    position: absolute;
+    top: -12px; left: 32px;
+    background: var(--dark-mid);
+    padding: 0 12px;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--crimson-pale);
+  }
+
+  .problem-hmw p {
+    font-size: clamp(16px, 1.8vw, 20px);
+    line-height: 1.7;
+    color: var(--cream);
+  }
+
+  /* STATS ROW */
+  .stats {
+    background: var(--crimson);
+    padding: 64px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 6vw, 80px);
+    letter-spacing: 2px;
+    color: var(--cream);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.6);
+  }
+
+  /* RESEARCH */
+  .research {
+    background: var(--dark);
+  }
+
+  .themes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px;
+    margin-top: 0;
+  }
+
+  .theme-card {
+    background: var(--dark-mid);
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .theme-card:hover {
+    background: var(--mid);
+  }
+
+  .theme-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--crimson);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s;
+  }
+
+  .theme-card:hover::after {
+    transform: scaleX(1);
+  }
+
+  .theme-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: rgba(122,12,18,0.3);
+    position: absolute;
+    top: 16px; right: 24px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .theme-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--cream);
+  }
+
+  .theme-card p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+
+  /* SOLUTION */
+  .solution {
+    background: var(--cream);
+    color: var(--dark);
+  }
+
+  .solution .section-label { color: var(--crimson); }
+  .solution .section-title { color: var(--dark); }
+
+  .features-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 48px;
+  }
+
+  .feature {
+    background: #e8e3da;
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .feature:hover {
+    background: #ddd8ce;
+  }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--crimson);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .feature h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: var(--dark);
+    margin-bottom: 12px;
+  }
+
+  .feature p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #555;
+  }
+
+  .feature-tag {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--crimson);
+    border-bottom: 1px solid var(--crimson);
+    padding-bottom: 2px;
+  }
+
+  /* JOURNEY MAP */
+  .journey {
+    background: var(--dark-mid);
+  }
+
+  .journey-steps {
+    display: flex;
+    gap: 0;
+    margin-top: 64px;
+    position: relative;
+  }
+
+  .journey-steps::before {
+    content: '';
+    position: absolute;
+    top: 32px;
+    left: 32px;
+    right: 32px;
+    height: 1px;
+    background: linear-gradient(to right, var(--crimson), var(--crimson-pale), var(--crimson));
+  }
+
+  .step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 16px;
+  }
+
+  .step-dot {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--dark);
+    border: 2px solid var(--crimson);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--crimson-pale);
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .step:hover .step-dot {
+    background: var(--crimson);
+    border-color: var(--crimson-pale);
+    color: var(--cream);
+  }
+
+  .step h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+
+  .step p {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  /* VALUE PROP */
+  .value {
+    background: var(--dark);
+  }
+
+  .value-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    margin-top: 64px;
+  }
+
+  .value-card {
+    padding: 48px 40px;
+    background: var(--dark-mid);
+    border-top: 3px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .value-card:nth-child(1) { border-color: var(--crimson); }
+  .value-card:nth-child(2) { border-color: var(--gold); }
+  .value-card:nth-child(3) { border-color: #4a8c6a; }
+
+  .value-card-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .value-card:nth-child(1) .value-card-label { color: var(--crimson-pale); }
+  .value-card:nth-child(2) .value-card-label { color: var(--gold); }
+  .value-card:nth-child(3) .value-card-label { color: #6ab88a; }
+
+  .value-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.4;
+    color: var(--cream);
+    margin-bottom: 16px;
+  }
+
+  .value-card p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+
+  /* ROADMAP */
+  .roadmap {
+    background: var(--crimson);
+    padding: 120px 48px;
+  }
+
+  .roadmap .section-label { color: rgba(245,240,232,0.6); }
+  .roadmap .section-title { color: var(--cream); }
+
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 64px;
+  }
+
+  .phase {
+    background: rgba(0,0,0,0.2);
+    padding: 48px 40px;
+    transition: background 0.3s;
+  }
+
+  .phase:hover {
+    background: rgba(0,0,0,0.35);
+  }
+
+  .phase-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    line-height: 1;
+    color: rgba(245,240,232,0.15);
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .phase-year {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.6);
+    margin-bottom: 12px;
+  }
+
+  .phase h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: var(--cream);
+    margin-bottom: 16px;
+  }
+
+  .phase p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.7);
+  }
+
+  /* STAKEHOLDERS */
+  .stakeholders {
+    background: var(--dark-mid);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .onion {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    aspect-ratio: 1;
+    margin: 0 auto;
+  }
+
+  .onion-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .ring-3 {
+    inset: 0;
+    border-color: rgba(122,12,18,0.3);
+    background: rgba(122,12,18,0.04);
+  }
+
+  .ring-2 {
+    inset: 12%;
+    border-color: rgba(122,12,18,0.5);
+    background: rgba(122,12,18,0.1);
+  }
+
+  .ring-1 {
+    inset: 28%;
+    border-color: rgba(122,12,18,0.9);
+    background: rgba(122,12,18,0.4);
+  }
+
+  .ring-label {
+    position: absolute;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* Floating labels */
+  .floating-labels {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .fl {
+    position: absolute;
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    letter-spacing: 1px;
+  }
+
+  .fl-top { top: 4%; left: 50%; transform: translateX(-50%); }
+  .fl-bottom { bottom: 4%; left: 50%; transform: translateX(-50%); }
+  .fl-left { left: 2%; top: 50%; transform: translateY(-50%); }
+  .fl-right { right: 2%; top: 50%; transform: translateY(-50%); }
+
+  .center-label {
+    position: absolute;
+    inset: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .center-label span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--cream);
+    opacity: 0.8;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--dark);
+    border-top: 1px solid var(--mid);
+    padding: 60px 48px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 4px;
+    line-height: 1;
+    color: var(--cream);
+  }
+
+  .footer-logo span { color: var(--crimson-pale); }
+
+  .footer-right {
+    text-align: right;
+  }
+
+  .footer-right p {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    line-height: 1.8;
+  }
+
+  .footer-right a {
+    color: var(--crimson-pale);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    nav ul { display: none; }
+    section { padding: 80px 24px; }
+    .hero { padding: 0 24px 80px; }
+    .problem { grid-template-columns: 1fr; gap: 48px; }
+    .features-row { grid-template-columns: 1fr; }
+    .journey-steps { flex-direction: column; gap: 32px; }
+    .journey-steps::before { display: none; }
+    .value-grid { grid-template-columns: 1fr; }
+    .phases { grid-template-columns: 1fr; }
+    .stakeholders { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 32px; align-items: flex-start; }
+    .footer-right { text-align: left; }
+    .stats { justify-content: center; }
+  }
+
+  /* SCROLL ANIMATIONS */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .fade-in-delay-1 { transition-delay: 0.1s; }
+  .fade-in-delay-2 { transition-delay: 0.2s; }
+  .fade-in-delay-3 { transition-delay: 0.3s; }
+  .fade-in-delay-4 { transition-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">MUNI<span>+</span></div>
+  <ul>
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#research">Research</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="bus-line"></div>
+  <div class="bus-line"></div>
+  <div class="bus-line"></div>
+
+  <div class="hero-content">
+
+    <h1 class="hero-title">MUNI<span class="plus">+</span></h1>
+    <p class="hero-subtitle">Redesigning an experience that gives professional commuters more comfort and control — without losing the civic spirit of public transit.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Team</span>
+        <span class="hero-meta-value">Team Barefoot</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">City</span>
+        <span class="hero-meta-value">San Francisco</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Method</span>
+        <span class="hero-meta-value">Human-Centered Design</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Output</span>
+        <span class="hero-meta-value">Product + Service Concept</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div>
+    <p class="section-label fade-in">The Problem</p>
+    <h2 class="section-title fade-in">The Daily<br>Strain</h2>
+    <blockquote class="problem-quote fade-in">
+      "It's just… my day-to-day commute shouldn't feel like survival, you know?"
+      <cite>— Muni Rider Interview</cite>
+    </blockquote>
+  </div>
+  <div>
+    <div class="problem-hmw fade-in">
+      <p>How might we redesign an experience that gives commuters more comfort and control, without losing the civic spirit of public transportation?</p>
+    </div>
+    <div style="margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px;">
+      <div style="background: var(--mid); padding: 24px; fade-in">
+        <div style="font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--crimson-pale); margin-bottom: 8px;">Finding</div>
+        <p style="font-size: 14px; line-height: 1.6; color: var(--cream);">Mood is lower during the commute than any other daily activity</p>
+      </div>
+      <div style="background: var(--mid); padding: 24px;">
+        <div style="font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--crimson-pale); margin-bottom: 8px;">Finding</div>
+        <p style="font-size: 14px; line-height: 1.6; color: var(--cream);">Reliability, cleanliness, and crowding are the biggest satisfaction gaps</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- RESEARCH -->
+<section class="research" id="research">
+  <p class="section-label fade-in">Experience Blueprint</p>
+  <h2 class="section-title fade-in">What We<br>Heard</h2>
+  <div class="themes-grid">
+    <div class="theme-card fade-in">
+      <div class="theme-num">01</div>
+      <h3>Comfort as Control</h3>
+      <p>"I like the bus when it's empty; I can listen to music and just be calm." Riders don't want luxury — they want agency over how they feel during the ride.</p>
+    </div>
+    <div class="theme-card fade-in fade-in-delay-1">
+      <div class="theme-num">02</div>
+      <h3>Crowding Breeds Stress</h3>
+      <p>"I don't know whether it's going to be a rowdy group of kids or an aggressive person." Overcrowding triggers anxiety and aggression, degrading the shared experience.</p>
+    </div>
+    <div class="theme-card fade-in fade-in-delay-2">
+      <div class="theme-num">03</div>
+      <h3>Uncertainty Creates Anxiety</h3>
+      <p>"If there are too many people, it gets loud and stressful. I just wait for the next one." Not knowing seat availability forces riders to sacrifice time for peace of mind.</p>
+    </div>
+    <div class="theme-card fade-in fade-in-delay-3">
+      <div class="theme-num">04</div>
+      <h3>Equity Is Non-Negotiable</h3>
+      <p>"Public transport should feel fair — not like some people get comfort and others don't." Any solution must preserve civic spirit, not create a two-tier underclass.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CURRENT STATE -->
+<section style="background: var(--cream); color: var(--dark); padding: 80px 48px;">
+  <p class="section-label" style="color: var(--crimson);">Current State of the Art</p>
+  <h2 class="section-title fade-in" style="color: var(--dark);">No Middle<br>Ground</h2>
+  <p style="font-size: 16px; color: #555; max-width: 600px; margin-bottom: 64px; font-family: 'Playfair Display', serif; font-style: italic; line-height: 1.6;">Every current option trades off either comfort or equity — there's no middle ground between public accessibility and personal control.</p>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;">
+    <div style="background: #e8e3da; padding: 40px 32px;">
+      <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 16px; color: var(--dark);">Light Rail</h3>
+      <p style="color: #4a8c6a; font-size: 13px; margin-bottom: 8px; font-weight: 500;">✓ Smooth & quieter ride</p>
+      <p style="color: var(--crimson); font-size: 13px;">✗ Limited coverage & last-mile access</p>
+    </div>
+    <div style="background: #e0dbd2; padding: 40px 32px; outline: 2px solid var(--crimson);">
+      <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 16px; color: var(--dark);">Personal Transit</h3>
+      <p style="color: #4a8c6a; font-size: 13px; margin-bottom: 8px; font-weight: 500;">✓ Full control & privacy</p>
+      <p style="color: var(--crimson); font-size: 13px;">✗ Costly, parking stress, traffic delays</p>
+    </div>
+    <div style="background: #e8e3da; padding: 40px 32px;">
+      <h3 style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 16px; color: var(--dark);">Rideshare</h3>
+      <p style="color: #4a8c6a; font-size: 13px; margin-bottom: 8px; font-weight: 500;">✓ Convenient & on-demand</p>
+      <p style="color: var(--crimson); font-size: 13px;">✗ Expensive, isolates riders</p>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="solution" id="solution">
+  <p class="section-label">The Concept</p>
+  <h2 class="section-title fade-in">Introducing<br>MUNI<span style="color: var(--crimson);">+</span></h2>
+  <p style="font-size: 18px; max-width: 600px; line-height: 1.7; color: #444; font-family: 'Playfair Display', serif; font-style: italic; margin-bottom: 64px;">An upgrade to Muni that enables calm and predictable journeys through personalized seat selection and improved buses.</p>
+  <div class="features-row">
+    <div class="feature fade-in">
+      <div class="feature-icon">🎫</div>
+      <h3>The Pass</h3>
+      <p>A Clipper-integrated Muni+ pass. Monthly at $108/mo or pay-per-ride at $3.85 — minimal friction, maximum access.</p>
+      <span class="feature-tag">Access Layer</span>
+    </div>
+    <div class="feature fade-in fade-in-delay-1">
+      <div class="feature-icon">📱</div>
+      <h3>The App</h3>
+      <p>Smart seat booking with real-time route intelligence. Reserve your seat before you leave home. Get arrival notifications. Check in with a tap.</p>
+      <span class="feature-tag">Control Layer</span>
+    </div>
+    <div class="feature fade-in fade-in-delay-2">
+      <div class="feature-icon">🚌</div>
+      <h3>The Bus</h3>
+      <p>Retrofitted Muni+ coaches with improved seating, lighting, and designated zones — built on existing fleet infrastructure for low-cost rollout.</p>
+      <span class="feature-tag">Experience Layer</span>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section class="journey" id="journey">
+  <p class="section-label fade-in">User Flow</p>
+  <h2 class="section-title fade-in">The Journey</h2>
+  <div class="journey-steps">
+    <div class="step fade-in">
+      <div class="step-dot">1</div>
+      <h4>Discovery & Sign-Up</h4>
+      <p>Download the app, choose a plan, and connect to your Clipper account</p>
+    </div>
+    <div class="step fade-in fade-in-delay-1">
+      <div class="step-dot">2</div>
+      <h4>Smart Booking</h4>
+      <p>Browse available routes and reserve your preferred seat on an upcoming bus</p>
+    </div>
+    <div class="step fade-in fade-in-delay-2">
+      <div class="step-dot">3</div>
+      <h4>Before Boarding</h4>
+      <p>Receive a push notification when the bus is 5 minutes away</p>
+    </div>
+    <div class="step fade-in fade-in-delay-3">
+      <div class="step-dot">4</div>
+      <h4>Tap to Board</h4>
+      <p>Tap your Muni+ pass or phone at the dedicated entry and receive a check-in confirmation</p>
+    </div>
+    <div class="step fade-in fade-in-delay-4">
+      <div class="step-dot">5</div>
+      <h4>The Ride</h4>
+      <p>Settle into your reserved seat and arrive calm, ready, in control</p>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE PROP -->
+<section class="value" id="value">
+  <p class="section-label fade-in">Value Proposition</p>
+  <h2 class="section-title fade-in">Built to<br>Work</h2>
+  <p style="font-family:'Playfair Display',serif;font-style:italic;color:var(--text-muted);font-size:16px;margin-bottom:72px;max-width:500px;">Click each circle to explore what makes MUNI+ viable.</p>
+
+  <!-- VENN DIAGRAM -->
+  <div class="venn-wrapper fade-in">
+    <svg class="venn-svg" viewBox="0 0 700 520" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="gD" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#c9383f" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#7a0c12" stop-opacity="0.08"/>
+        </radialGradient>
+        <radialGradient id="gV" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#9e1219" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#7a0c12" stop-opacity="0.08"/>
+        </radialGradient>
+        <radialGradient id="gF" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#c9383f" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#7a0c12" stop-opacity="0.08"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="6" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Circles -->
+      <circle class="venn-circle" id="vc-desirability" cx="285" cy="190" r="170"
+        fill="url(#gD)" stroke="#c9383f" stroke-width="1.5" stroke-opacity="0.6"
+        data-target="desirability"/>
+      <circle class="venn-circle" id="vc-viability" cx="415" cy="190" r="170"
+        fill="url(#gV)" stroke="#9e1219" stroke-width="1.5" stroke-opacity="0.6"
+        data-target="viability"/>
+      <circle class="venn-circle" id="vc-feasibility" cx="350" cy="295" r="170"
+        fill="url(#gF)" stroke="#c9383f" stroke-width="1.5" stroke-opacity="0.5"
+        data-target="feasibility"/>
+
+      <!-- Labels — positioned well outside circles -->
+      <text x="118" y="118" text-anchor="middle" class="venn-label" fill="#c9383f" data-target="desirability">DESIRABILITY</text>
+      <text x="582" y="118" text-anchor="middle" class="venn-label" fill="#c9383f" data-target="viability">VIABILITY</text>
+      <text x="350" y="490" text-anchor="middle" class="venn-label" fill="#c9383f" data-target="feasibility">FEASIBILITY</text>
+
+      <!-- Connector lines from label to circle edge -->
+      <line x1="148" y1="122" x2="188" y2="148" stroke="#c9383f" stroke-opacity="0.25" stroke-width="1"/>
+      <line x1="552" y1="122" x2="512" y2="148" stroke="#c9383f" stroke-opacity="0.25" stroke-width="1"/>
+      <line x1="350" y1="478" x2="350" y2="462" stroke="#c9383f" stroke-opacity="0.25" stroke-width="1"/>
+
+      <!-- Center label -->
+      <text x="350" y="235" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="15" fill="#f5f0e8" opacity="0.6" letter-spacing="3">MUNI+</text>
+    </svg>
+  </div>
+
+  <!-- COIN FLIP CARDS -->
+  <div class="venn-cards">
+    <!-- DESIRABILITY -->
+    <div class="venn-card" id="card-desirability">
+      <div class="card-inner">
+        <div class="card-front" style="border-color:#c9383f;">
+          <div class="card-front-label" style="color:#c9383f;">Desirability</div>
+          <div class="card-front-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 42C24 42 6 30 6 17C6 12.029 10.029 8 15 8C18.18 8 21 9.8 22.5 12.4C24 9.8 26.82 8 30 8C34.971 8 39 12.029 39 17C39 30 24 42 24 42Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M15 17C15 14.239 17.239 12 20 12" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+            </svg>
+          </div>
+          <p class="card-front-hint">Click to reveal</p>
+        </div>
+        <div class="card-back" style="border-color:#c9383f; background: linear-gradient(135deg, #1c1b19, #2a0a0c);">
+          <div class="card-back-label" style="color:#c9383f;">Desirability</div>
+          <h4>"Knowing I'll have a seat in the morning would make a big difference."</h4>
+          <p>Professionals don't want luxury — they want control and calm. Muni+ delivers exactly that, without creating a two-tier civic experience.</p>
+          <cite>— Ricardo, 31</cite>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIABILITY -->
+    <div class="venn-card" id="card-viability">
+      <div class="card-inner">
+        <div class="card-front" style="border-color:#9e1219;">
+          <div class="card-front-label" style="color:#9e1219;">Viability</div>
+          <div class="card-front-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="7" y="7" width="34" height="34" rx="2" stroke="white" stroke-width="1.5"/>
+              <polyline points="13,32 20,22 27,27 35,15" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="30,15 35,15 35,20" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="7" y1="37" x2="41" y2="37" stroke="white" stroke-width="1" opacity="0.3"/>
+            </svg>
+          </div>
+          <p class="card-front-hint">Click to reveal</p>
+        </div>
+        <div class="card-back" style="border-color:#9e1219; background: linear-gradient(135deg, #1c1b19, #2a0a0c);">
+          <div class="card-back-label" style="color:#9e1219;">Viability</div>
+          <h4>$35M potential annual revenue at modest adoption</h4>
+          <p>$108/month (+$22) or $3.85/ride (+$1) pricing unlocks a self-sustaining premium tier that funds improvements for all riders.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEASIBILITY -->
+    <div class="venn-card" id="card-feasibility">
+      <div class="card-inner">
+        <div class="card-front" style="border-color:#7a0c12;">
+          <div class="card-front-label" style="color:#c9383f;">Feasibility</div>
+          <div class="card-front-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="19" cy="19" r="5" stroke="white" stroke-width="1.5"/>
+              <path d="M19 8v3M19 27v3M8 19h3M27 19h3M10.93 10.93l2.12 2.12M25.95 25.95l2.12 2.12M10.93 27.07l2.12-2.12M25.95 12.05l2.12-2.12" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="32" cy="32" r="4" stroke="white" stroke-width="1.5" opacity="0.6"/>
+              <path d="M32 24v2.5M32 37.5V40M24 32h2.5M37.5 32H40M26.34 26.34l1.77 1.77M34.89 34.89l1.77 1.77M26.34 37.66l1.77-1.77M34.89 29.11l1.77-1.77" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+            </svg>
+          </div>
+          <p class="card-front-hint">Click to reveal</p>
+        </div>
+        <div class="card-back" style="border-color:#7a0c12; background: linear-gradient(135deg, #1c1b19, #2a0a0c);">
+          <div class="card-back-label" style="color:#c9383f;">Feasibility</div>
+          <h4>Built on existing Clipper and Muni infrastructure</h4>
+          <p>Scalable, low-cost rollout leverages the existing fleet, Clipper integration, and the Muni app — no need to build from scratch.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* VENN */
+  .venn-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 64px;
+  }
+
+  .venn-svg {
+    width: 100%;
+    max-width: 560px;
+    overflow: visible;
+  }
+
+  .venn-circle {
+    cursor: pointer;
+    transition: filter 0.3s, stroke-opacity 0.3s;
+  }
+
+  .venn-circle:hover, .venn-circle.active {
+    filter: url(#glow);
+    stroke-opacity: 1;
+    stroke-width: 2.5;
+  }
+
+  .venn-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 0.3s;
+  }
+
+  .venn-label:hover, .venn-label.active { opacity: 1; }
+
+  /* CARDS ROW */
+  .venn-cards {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* COIN FLIP */
+  .venn-card {
+    width: 260px;
+    height: 280px;
+    perspective: 1000px;
+    cursor: pointer;
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .venn-card.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-front, .card-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border: 1px solid;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--dark-mid);
+  }
+
+  .card-back {
+    transform: rotateY(180deg);
+    text-align: left;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 28px;
+  }
+
+  .card-front-label, .card-back-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .card-back-label { margin-bottom: 12px; }
+
+  .card-front-icon {
+    margin-bottom: 16px;
+    opacity: 0.9;
+  }
+
+  .card-front-hint {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .card-back h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--cream);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .card-back p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+
+  .card-back cite {
+    display: block;
+    margin-top: 16px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    font-style: normal;
+  }
+</style>
+
+<script>
+  // Venn + card interaction
+  document.querySelectorAll('.venn-circle, .venn-label').forEach(el => {
+    el.addEventListener('click', () => {
+      const target = el.getAttribute('data-target');
+      toggleCard(target);
+    });
+  });
+
+  document.querySelectorAll('.venn-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('flipped');
+    });
+  });
+
+  function toggleCard(target) {
+    const card = document.getElementById('card-' + target);
+    if (card) card.classList.toggle('flipped');
+
+    // Highlight circle
+    document.querySelectorAll('.venn-circle, .venn-label').forEach(el => {
+      if (el.getAttribute('data-target') === target) {
+        el.classList.toggle('active');
+      }
+    });
+  }
+</script>
+
+<!-- STAKEHOLDERS -->
+<section class="stakeholders">
+  <div>
+    <p class="section-label fade-in">Ecosystem</p>
+    <h2 class="section-title fade-in">The<br>Stakeholders</h2>
+    <div style="margin-top: 32px;">
+      <div style="margin-bottom: 24px;">
+        <div style="font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--crimson-pale); margin-bottom: 8px;">Partners</div>
+        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.7;">SFCTA, SFMTA, Muni, Companies</p>
+      </div>
+      <div style="margin-bottom: 24px;">
+        <div style="font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--crimson-pale); margin-bottom: 8px;">Primary Users</div>
+        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.7;">Daily Commuters & Riders, Muni Operators & Drivers</p>
+      </div>
+      <div>
+        <div style="font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--crimson-pale); margin-bottom: 8px;">Secondary</div>
+        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.7;">Local Employers, Local Businesses, City Government, City Residents</p>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="onion fade-in">
+      <div class="onion-ring ring-3"></div>
+      <div class="onion-ring ring-2"></div>
+      <div class="onion-ring ring-1"></div>
+      <div class="center-label">
+        <span>SFCTA</span>
+        <span>SFMTA</span>
+        <span>Muni</span>
+      </div>
+      <div class="floating-labels">
+        <span class="fl fl-top">Local Employers</span>
+        <span class="fl fl-bottom">City Residents</span>
+        <span class="fl fl-left">Local<br>Biz</span>
+        <span class="fl fl-right">City Gov</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="roadmap" id="roadmap">
+  <p class="section-label">What's Next</p>
+  <h2 class="section-title fade-in">Phased<br>Rollout</h2>
+  <div class="phases">
+    <div class="phase fade-in">
+      <span class="phase-num">01</span>
+      <div class="phase-year">Year 1</div>
+      <h3>Pilot Launch</h3>
+      <p>Partner with SFMTA to retrofit select buses with Muni+ interior upgrades and integrate seat booking into the existing Muni app. Validate desirability and technical feasibility on a high-demand commuter route.</p>
+    </div>
+    <div class="phase fade-in fade-in-delay-1">
+      <span class="phase-num">02</span>
+      <div class="phase-year">Year 2</div>
+      <h3>Commuter Corridors</h3>
+      <p>Introduce Muni+ service to 5–6 additional peak-hour routes. Launch corporate subscription partnerships. Test scalability and revenue generation while improving commuter access.</p>
+    </div>
+    <div class="phase fade-in fade-in-delay-2">
+      <span class="phase-num">03</span>
+      <div class="phase-year">Year 3–4</div>
+      <h3>Citywide Integration</h3>
+      <p>Fully integrate Muni+ tiers into the Clipper system and deploy consistent design standards across all upgraded buses. Establish Muni+ as a self-sustaining premium tier.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">MUNI<span>+</span></div>
+    <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px; letter-spacing: 1px;">In collaboration with Medill Northwestern University</p>
+  </div>
+  <div class="footer-right">
+    <p>San Francisco</p>
+    <p>7:30 AM · Market St & Van Ness Ave</p>
+    <br>
+    <a href="#">View Full Deck →</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
